@@ -28,9 +28,7 @@ fn process(input: &str) -> u32 {
             }
 
             if let Some(ref mut active_digit) = active_number.clone() {
-                println!("Finished reading active number {active_digit}, accessing if its a valid part number");
-
-                dbg!(char_index);
+                println!("Finished reading active number {active_digit}, assessing if its a valid part number");
 
                 let start_index = if character.is_ascii_digit() {
                     char_index - (active_digit.len() - 1)
@@ -38,11 +36,7 @@ fn process(input: &str) -> u32 {
                     char_index - active_digit.len()
                 };
 
-                dbg!(start_index);
-
                 let end_index = start_index + active_digit.len() - 1;
-
-                dbg!(end_index);
 
                 let left_index = start_index.checked_sub(1);
                 let right_index = if end_index == line.len() - 1 {
@@ -50,8 +44,6 @@ fn process(input: &str) -> u32 {
                 } else {
                     Some(end_index + 1)
                 };
-
-                dbg!(right_index);
 
                 // sort out external line range indices
                 let external_line_start_index = if let Some(index) = left_index {
@@ -65,8 +57,6 @@ fn process(input: &str) -> u32 {
                 } else {
                     end_index
                 };
-
-                println!("External line range is {external_line_start_index} to {external_line_end_index}");
 
                 // check line above
                 if let Some(line_above_index) = line_index.checked_sub(1) {
@@ -82,7 +72,6 @@ fn process(input: &str) -> u32 {
                         .take((external_line_end_index - external_line_start_index) + 1)
                     {
                         if !character.is_ascii_digit() && character != '.' {
-                            println!("SYMBOL!");
                             let parsed_digit: u32 = active_digit
                                 .parse()
                                 .expect("Failed to parse stringified number to u32");
@@ -116,10 +105,6 @@ fn process(input: &str) -> u32 {
                 }
 
                 if let Some(index) = right_index {
-                    dbg!(line);
-                    dbg!(line.len());
-                    dbg!(index);
-
                     let character = line
                         .chars()
                         .nth(index)
@@ -147,8 +132,6 @@ fn process(input: &str) -> u32 {
                         .take((external_line_end_index - external_line_start_index) + 1)
                     {
                         if !character.is_ascii_digit() && character != '.' {
-                            println!("SYMBOL!");
-
                             let parsed_digit: u32 = active_digit
                                 .parse()
                                 .expect("Failed to parse stringified number to u32");
@@ -167,8 +150,6 @@ fn process(input: &str) -> u32 {
             }
         }
     }
-
-    dbg!(&part_numbers);
 
     part_numbers.iter().sum()
 }
