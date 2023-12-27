@@ -1,7 +1,10 @@
+use std::collections::HashMap;
+
 fn process(input: &str) -> u32 {
     let lines: Vec<&str> = input.lines().collect();
     let mut part_numbers: Vec<u32> = vec![];
     let mut active_number: Option<String> = None;
+    let mut gear_map: HashMap<(u32, u32), Vec<u32>> = HashMap::new();
 
     for (line_index, line) in lines.iter().enumerate() {
         // clear previously active non-part number from previous line if existing
@@ -70,8 +73,8 @@ fn process(input: &str) -> u32 {
 
                     println!("Line above found");
 
-                    for character in line_above
-                        .chars()
+                    for (char_index, character) in line_above
+                        .char_indices()
                         .skip(external_line_start_index)
                         .take((external_line_end_index - external_line_start_index) + 1)
                     {
@@ -79,6 +82,15 @@ fn process(input: &str) -> u32 {
                             let parsed_digit: u32 = active_digit
                                 .parse()
                                 .expect("Failed to parse stringified number to u32");
+
+                            if character == '*' {
+                                let key = (char_index as u32, line_above_index as u32);
+                                if let Some(part_number_collection) = gear_map.get_mut(&key) {
+                                    part_number_collection.push(parsed_digit);
+                                } else {
+                                    gear_map.insert(key, vec![parsed_digit]);
+                                }
+                            }
 
                             part_numbers.push(parsed_digit);
                             active_number = None;
@@ -102,6 +114,15 @@ fn process(input: &str) -> u32 {
                             .parse()
                             .expect("Failed to parse stringified number to u32");
 
+                        if character == '*' {
+                            let key = (index as u32, line_index as u32);
+                            if let Some(part_number_collection) = gear_map.get_mut(&key) {
+                                part_number_collection.push(parsed_digit);
+                            } else {
+                                gear_map.insert(key, vec![parsed_digit]);
+                            }
+                        }
+
                         part_numbers.push(parsed_digit);
                         active_number = None;
                         continue;
@@ -121,6 +142,13 @@ fn process(input: &str) -> u32 {
                             .parse()
                             .expect("Failed to parse stringified number to u32");
 
+                        let key = (index as u32, line_index as u32);
+                        if let Some(part_number_collection) = gear_map.get_mut(&key) {
+                            part_number_collection.push(parsed_digit);
+                        } else {
+                            gear_map.insert(key, vec![parsed_digit]);
+                        }
+
                         part_numbers.push(parsed_digit);
                         active_number = None;
                         continue;
@@ -131,8 +159,8 @@ fn process(input: &str) -> u32 {
                 if let Some(line_below) = lines.get(line_index + 1) {
                     println!("Line below found");
 
-                    for character in line_below
-                        .chars()
+                    for (char_index, character) in line_below
+                        .char_indices()
                         .skip(external_line_start_index)
                         .take((external_line_end_index - external_line_start_index) + 1)
                     {
@@ -140,6 +168,15 @@ fn process(input: &str) -> u32 {
                             let parsed_digit: u32 = active_digit
                                 .parse()
                                 .expect("Failed to parse stringified number to u32");
+
+                            if character == '*' {
+                                let key = (char_index as u32, (line_index + 1) as u32);
+                                if let Some(part_number_collection) = gear_map.get_mut(&key) {
+                                    part_number_collection.push(parsed_digit);
+                                } else {
+                                    gear_map.insert(key, vec![parsed_digit]);
+                                }
+                            }
 
                             part_numbers.push(parsed_digit);
                             active_number = None;
@@ -156,7 +193,24 @@ fn process(input: &str) -> u32 {
         }
     }
 
-    part_numbers.iter().sum()
+    let gear_ratio_sum: u32 = gear_map
+        .into_values()
+        .filter_map(|part_number_collection| {
+            if part_number_collection.len() == 2 {
+                Some(part_number_collection.iter().fold(0, |acc, part_number| {
+                    if acc == 0 {
+                        acc + part_number
+                    } else {
+                        acc * part_number
+                    }
+                }))
+            } else {
+                None
+            }
+        })
+        .sum();
+
+    gear_ratio_sum
 }
 
 fn main() {
@@ -173,6 +227,6 @@ mod part_2_tests {
     fn process_passes() {
         let input = include_str!("./sample.txt");
         let sum = process(input);
-        assert_eq!(sum, 4361 as u32);
+        assert_eq!(sum, 467835 as u32);
     }
 }
