@@ -21,6 +21,12 @@ impl ScratchCardPile {
 
         Ok(Self { scratchcards })
     }
+
+    pub fn calculate_points(&self) -> u32 {
+        self.scratchcards
+            .iter()
+            .fold(0, |acc, scratchcard| acc + scratchcard.calculate_points())
+    }
 }
 
 #[derive(Debug)]
@@ -82,7 +88,7 @@ impl ScratchCard {
         })
     }
 
-    pub fn calculate_points(self) -> u32 {
+    pub fn calculate_points(&self) -> u32 {
         self.winning_numbers
             .iter()
             .filter(|&winning_number| self.player_numbers.contains(&winning_number))
@@ -110,6 +116,18 @@ mod test {
             true,
             scratchcard_pile.is_ok_and(|scratchcard_pile| scratchcard_pile.scratchcards.len() == 6)
         );
+    }
+
+    #[test]
+    fn scratchcard_pile_calculates_points_successfully() {
+        let input = include_str!("sample.txt");
+        let scratchcard_pile = ScratchCardPile::parse(input);
+        match scratchcard_pile {
+            Ok(scratchcard_pile) => {
+                assert_eq!(13, scratchcard_pile.calculate_points())
+            }
+            Err(error) => panic!("{error}"),
+        }
     }
 
     #[test]
