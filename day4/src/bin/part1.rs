@@ -1,3 +1,29 @@
+#[derive(Debug)]
+struct ScratchCardPile {
+    scratchcards: Vec<ScratchCard>,
+}
+
+impl ScratchCardPile {
+    fn split_scratchcard_lines(input: &str) -> Vec<&str> {
+        input.lines().collect()
+    }
+
+    fn parse_scratchcard_lines(scratchcard_lines: Vec<&str>) -> Result<Vec<ScratchCard>, &str> {
+        scratchcard_lines
+            .iter()
+            .map(|scratchcard_line| ScratchCard::parse(scratchcard_line))
+            .collect()
+    }
+
+    pub fn parse(input: &str) -> Result<Self, &str> {
+        let scratchcard_lines = Self::split_scratchcard_lines(input);
+        let scratchcards = Self::parse_scratchcard_lines(scratchcard_lines)?;
+
+        Ok(Self { scratchcards })
+    }
+}
+
+#[derive(Debug)]
 struct ScratchCard {
     id: u32,
     winning_numbers: Vec<u32>,
@@ -75,6 +101,16 @@ fn main() {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn scratchcard_pile_parses_successfully() {
+        let input = include_str!("sample.txt");
+        let scratchcard_pile = ScratchCardPile::parse(input);
+        assert_eq!(
+            true,
+            scratchcard_pile.is_ok_and(|scratchcard_pile| scratchcard_pile.scratchcards.len() == 6)
+        );
+    }
 
     #[test]
     fn scratchcard_parses_successfully() {
