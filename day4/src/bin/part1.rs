@@ -97,11 +97,17 @@ impl ScratchCard {
 }
 
 fn process(input: &str) -> Result<u32, &str> {
-    todo!()
+    let scratchcard_pile = ScratchCardPile::parse(input)?;
+    Ok(scratchcard_pile.calculate_points())
 }
 
 fn main() {
-    println!("Hello, part 1!");
+    let input = include_str!("input.txt");
+    let result = process(input);
+    match result {
+        Ok(result) => println!("The result is {result}"),
+        Err(error) => panic!("{error}"),
+    }
 }
 
 #[cfg(test)]
