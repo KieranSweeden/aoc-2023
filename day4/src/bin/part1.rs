@@ -1,4 +1,5 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+
 struct ScratchCardPile {
     scratchcards: Vec<ScratchCard>,
 }
@@ -27,15 +28,9 @@ impl ScratchCardPile {
             .iter()
             .fold(0, |acc, scratchcard| acc + scratchcard.calculate_points())
     }
-
-    pub fn calculate_original_and_copy_scratchcard_count(&self) -> u32 {
-        self.scratchcards.iter().fold(0, |count, scratchcard| {
-            scratchcard.calculate_intersecting_number_count() + 1
-        })
-    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct ScratchCard {
     id: u32,
     winning_numbers: Vec<u32>,
@@ -100,15 +95,6 @@ impl ScratchCard {
             .filter(|&winning_number| self.player_numbers.contains(&winning_number))
             .fold(0, |acc, _| if acc == 0 { acc + 1 } else { acc * 2 })
     }
-
-    pub fn calculate_intersecting_number_count(&self) -> u32 {
-        self.winning_numbers
-            .iter()
-            .filter(|&winning_number| self.player_numbers.contains(&winning_number))
-            .map(|winning_number| winning_number.clone())
-            .collect::<Vec<u32>>()
-            .len() as u32
-    }
 }
 
 fn process(input: &str) -> Result<u32, &str> {
@@ -145,7 +131,7 @@ mod test {
         let scratchcard_pile = ScratchCardPile::parse(input);
         match scratchcard_pile {
             Ok(scratchcard_pile) => {
-                assert_eq!(13, scratchcard_pile.calculate_points())
+                assert_eq!(13, scratchcard_pile.calculate_points());
             }
             Err(error) => panic!("{error}"),
         }
@@ -176,18 +162,6 @@ mod test {
             Ok(scratchcard) => {
                 let points = scratchcard.calculate_points();
                 assert_eq!(points, 8);
-            }
-            Err(error) => panic!("{error}"),
-        }
-    }
-
-    #[test]
-    fn scratchcard_calculates_intersecting_number_count_successfully() {
-        let input = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53";
-        let scratchcard = ScratchCard::parse(input);
-        match scratchcard {
-            Ok(scratchcard) => {
-                assert_eq!(scratchcard.calculate_intersecting_number_count(), 4);
             }
             Err(error) => panic!("{error}"),
         }
