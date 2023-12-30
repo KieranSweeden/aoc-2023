@@ -3,6 +3,15 @@ use std::collections::VecDeque;
 pub mod map;
 pub mod range;
 
+pub enum SeedParseMode {
+    Simple,
+    Range,
+}
+
+pub struct AlmanacOptions {
+    pub seed_parse_mode: SeedParseMode,
+}
+
 #[derive(Debug)]
 pub struct Almanac {
     seeds: Vec<u32>,
@@ -19,7 +28,24 @@ impl Almanac {
         Ok((seed_str, parts.into()))
     }
 
-    fn parse_seed_str(seed_str: &str) -> Result<Vec<u32>, &str> {
+    fn parse_seed_str_simple(seed_str: &str) -> Result<Vec<u32>, &str> {
+        let seed_id_list_str = seed_str
+            .split(':')
+            .nth(1)
+            .expect("Failed to retrieve seed ids");
+
+        Ok(seed_id_list_str
+            .trim()
+            .split_whitespace()
+            .map(|seed_id| {
+                seed_id
+                    .parse::<u32>()
+                    .expect("Failed to parse seed id to number")
+            })
+            .collect())
+    }
+
+    fn parse_seed_str_range(seed_str: &str) -> Result<Vec<u32>, &str> {
         let seed_id_list_str = seed_str
             .split(':')
             .nth(1)
@@ -72,9 +98,12 @@ impl Almanac {
             })
     }
 
-    pub fn parse(input: &str) -> Result<Self, &str> {
+    pub fn parse(input: &str, options: AlmanacOptions) -> Result<Self, &str> {
         let (seed_str, mappers_str) = Self::split_seeds_from_mappers(input)?;
-        let seeds = Self::parse_seed_str(seed_str)?;
+        let seeds = match options.seed_parse_mode {
+            SeedParseMode::Simple => Self::parse_seed_str_simple(seed_str)?,
+            SeedParseMode::Range => Self::parse_seed_str_range(seed_str)?,
+        };
         let mappers = Self::parse_mappers_str(mappers_str)?;
         Ok(Self { seeds, mappers })
     }
@@ -87,7 +116,10 @@ mod test {
     #[test]
     fn get_location_for_seed() -> Result<(), &'static str> {
         let input = include_str!("../example.txt");
-        let almanac = Almanac::parse(input)?;
+        let options = AlmanacOptions {
+            seed_parse_mode: SeedParseMode::Simple,
+        };
+        let almanac = Almanac::parse(input, options)?;
         assert_eq!(almanac.get_location_for_seed(79), 82);
         assert_eq!(almanac.get_location_for_seed(14), 43);
         assert_eq!(almanac.get_location_for_seed(55), 86);
@@ -98,7 +130,10 @@ mod test {
     #[test]
     fn almanac_parses_successfully() -> Result<(), &'static str> {
         let input = include_str!("../example.txt");
-        let almanac = Almanac::parse(input)?;
+        let options = AlmanacOptions {
+            seed_parse_mode: SeedParseMode::Simple,
+        };
+        let almanac = Almanac::parse(input, options)?;
         assert_eq!(almanac.seeds.len(), 4);
         assert_eq!(almanac.mappers.len(), 7);
         Ok(())

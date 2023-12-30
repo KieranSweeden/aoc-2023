@@ -1,5 +1,7 @@
 mod almanac;
 
+use almanac::{Almanac, AlmanacOptions, SeedParseMode};
+
 fn main() {
     let input = include_str!("input.txt");
     match process(input) {
@@ -9,7 +11,10 @@ fn main() {
 }
 
 fn process(input: &str) -> Result<i64, &str> {
-    let almanac = almanac::Almanac::parse(input)?;
+    let options = AlmanacOptions {
+        seed_parse_mode: SeedParseMode::Simple,
+    };
+    let almanac = Almanac::parse(input, options)?;
     Ok(almanac.get_closest_location())
 }
 
