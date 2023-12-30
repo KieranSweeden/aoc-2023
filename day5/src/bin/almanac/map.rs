@@ -2,7 +2,7 @@ use crate::almanac::range::SourceRange;
 use std::collections::VecDeque;
 
 #[derive(Debug)]
-struct Map {
+pub struct Map {
     source_name: String,
     destination_name: String,
     source_ranges: Vec<SourceRange>,
@@ -28,7 +28,7 @@ impl Map {
         ))
     }
 
-    fn parse(input: &str) -> Result<Self, &str> {
+    pub fn parse(input: &str) -> Result<Self, &str> {
         let mut lines: VecDeque<&str> = input.lines().collect();
         let description = lines
             .pop_front()
