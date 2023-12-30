@@ -47,8 +47,29 @@ impl Almanac {
         Ok(mappers)
     }
 
-    pub fn get_nearest_location_id(&self) -> u32 {
-        todo!()
+    pub fn get_closest_location(&self) -> i64 {
+        let mut closest_location_id: i64 = 0;
+
+        for seed_source_id in self.seeds.iter() {
+            let location_id = self.get_location_for_seed(*seed_source_id);
+            if closest_location_id == 0 {
+                closest_location_id = location_id;
+            } else {
+                if location_id < closest_location_id {
+                    closest_location_id = location_id;
+                }
+            }
+        }
+
+        closest_location_id
+    }
+
+    fn get_location_for_seed(&self, first_source_id: u32) -> i64 {
+        self.mappers
+            .iter()
+            .fold(first_source_id.into(), |source_id, mapper| {
+                mapper.get_destination_id_by_source_id(source_id as u32)
+            })
     }
 
     pub fn parse(input: &str) -> Result<Self, &str> {
@@ -64,10 +85,20 @@ mod test {
     use super::*;
 
     #[test]
-    fn almanac_parses_successfully() -> Result<(), String> {
+    fn get_location_for_seed() -> Result<(), &'static str> {
         let input = include_str!("../example.txt");
         let almanac = Almanac::parse(input)?;
-        dbg!(&almanac);
+        assert_eq!(almanac.get_location_for_seed(79), 82);
+        assert_eq!(almanac.get_location_for_seed(14), 43);
+        assert_eq!(almanac.get_location_for_seed(55), 86);
+        assert_eq!(almanac.get_location_for_seed(13), 35);
+        Ok(())
+    }
+
+    #[test]
+    fn almanac_parses_successfully() -> Result<(), &'static str> {
+        let input = include_str!("../example.txt");
+        let almanac = Almanac::parse(input)?;
         assert_eq!(almanac.seeds.len(), 4);
         assert_eq!(almanac.mappers.len(), 7);
         Ok(())

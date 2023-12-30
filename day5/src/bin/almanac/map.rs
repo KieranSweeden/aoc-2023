@@ -50,7 +50,7 @@ impl Map {
         })
     }
 
-    fn get_destination_id_by_source_id(&self, source_id: u32) -> i64 {
+    pub fn get_destination_id_by_source_id(&self, source_id: u32) -> i64 {
         let mut destination_id = source_id as i64;
 
         for source_range in self.source_ranges.iter() {

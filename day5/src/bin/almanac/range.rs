@@ -6,7 +6,7 @@ const RANGE_INDEX: usize = 2;
 pub struct SourceRange {
     pub start: u32,
     pub end: u32,
-    pub destination_difference: i32,
+    pub destination_difference: i64,
 }
 
 impl SourceRange {
@@ -54,7 +54,7 @@ impl SourceRange {
         Ok(Self {
             start: source_start_id,
             end: source_start_id + (range - 1),
-            destination_difference: destination_start_id as i32 - source_start_id as i32,
+            destination_difference: destination_start_id as i64 - source_start_id as i64,
         })
     }
 }

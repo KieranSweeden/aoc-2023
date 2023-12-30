@@ -1,12 +1,16 @@
 mod almanac;
 
 fn main() {
-    println!("Hello, part 1!");
+    let input = include_str!("input.txt");
+    match process(input) {
+        Ok(result) => println!("The result is {result}"),
+        Err(error) => panic!("{error}"),
+    }
 }
 
-fn process(input: &str) -> Result<u32, &str> {
+fn process(input: &str) -> Result<i64, &str> {
     let almanac = almanac::Almanac::parse(input)?;
-    Ok(almanac.get_nearest_location_id())
+    Ok(almanac.get_closest_location())
 }
 
 #[cfg(test)]
