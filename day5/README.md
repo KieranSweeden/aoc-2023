@@ -93,8 +93,8 @@ Applying this thought process to the example above, let's look at the mapper exa
 	52 50 48
 
 Here we have two source ranges:
-- `98-99`, with a difference of `-48` after taking 98 (source start) away from 50 (source start).
-- `50-98`, with a difference of `2` after taking 50 (source start) away from 52 (destination start).
+- `98-99`, with a difference of `-48` after taking 98 (source start) away from 50 (destination50 start).
+- `50-97`, with a difference of `2` after taking 50 (source start) away from 52 (destination start).
 
 With these source ranges defined, we can then access whether a given source ID falls within one of these ranges. If the source ID falls within a range, return the sum of the source ID against the difference of the range, else return the source ID itself.
 
