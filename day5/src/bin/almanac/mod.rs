@@ -47,6 +47,10 @@ impl Almanac {
         Ok(mappers)
     }
 
+    pub fn get_nearest_location_id(&self) -> u32 {
+        todo!()
+    }
+
     pub fn parse(input: &str) -> Result<Self, &str> {
         let (seed_str, mappers_str) = Self::split_seeds_from_mappers(input)?;
         let seeds = Self::parse_seed_str(seed_str)?;

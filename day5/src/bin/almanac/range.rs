@@ -40,6 +40,14 @@ impl SourceRange {
         Ok((destination_start_id, source_start_id, range))
     }
 
+    pub fn convert_to_destination(&self, source_id: u32) -> i64 {
+        source_id as i64 + self.destination_difference as i64
+    }
+
+    pub fn contains(&self, source_id: u32) -> bool {
+        source_id >= self.start && source_id <= self.end
+    }
+
     pub fn parse(input: &str) -> Result<Self, &str> {
         let (destination_start_id, source_start_id, range) = Self::get_numbers(input)?;
 
@@ -54,6 +62,29 @@ impl SourceRange {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn source_ranges_contains_passes() -> Result<(), &'static str> {
+        let input = "50 98 2";
+        let source_range = SourceRange::parse(input)?;
+
+        assert_eq!(source_range.convert_to_destination(99), 51);
+        assert_eq!(source_range.convert_to_destination(98), 50);
+
+        Ok(())
+    }
+
+    #[test]
+    fn source_ranges_destination_conversion_passes() -> Result<(), &'static str> {
+        let input = "50 98 2";
+        let source_range = SourceRange::parse(input)?;
+
+        assert_eq!(source_range.contains(99), true);
+        assert_eq!(source_range.contains(21), false);
+        assert_eq!(source_range.contains(98), true);
+
+        Ok(())
+    }
 
     #[test]
     fn source_range_parses_successfully() {

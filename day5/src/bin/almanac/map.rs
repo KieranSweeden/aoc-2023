@@ -50,12 +50,12 @@ impl Map {
         })
     }
 
-    fn get_destination_id_by_source_id(&self, source_id: u32) -> i32 {
-        let mut destination_id = source_id as i32;
+    fn get_destination_id_by_source_id(&self, source_id: u32) -> i64 {
+        let mut destination_id = source_id as i64;
 
         for source_range in self.source_ranges.iter() {
-            if (source_range.start..=source_range.end).contains(&source_id) {
-                destination_id = destination_id + source_range.destination_difference;
+            if source_range.contains(source_id) {
+                destination_id = source_range.convert_to_destination(source_id);
                 break;
             }
         }
