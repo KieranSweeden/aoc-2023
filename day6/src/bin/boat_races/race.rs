@@ -1,18 +1,18 @@
 #[derive(Debug)]
 pub struct Race {
-    pub time: u32,
-    pub record_distance: u32,
+    pub time: u64,
+    pub record_distance: u64,
 }
 
 impl Race {
-    pub fn new(time: u32, record_distance: u32) -> Self {
+    pub fn new(time: u64, record_distance: u64) -> Self {
         Race {
             time,
             record_distance,
         }
     }
 
-    pub fn get_number_of_ways_record_distance_can_be_broken(&self) -> u32 {
+    pub fn get_number_of_ways_record_distance_can_be_broken(&self) -> u64 {
         let mut number_of_ways_record_distance_can_be_broken = 0;
         for num in 0..self.time {
             let time_spent_holding_button_down = num;

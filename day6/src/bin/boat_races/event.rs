@@ -6,12 +6,52 @@ use crate::boat_races::race::Race;
 pub struct ParseBoatRacesFromStringError;
 
 #[derive(Debug)]
+pub struct SingleRaceBoatRaceEvent {
+    pub race: Race,
+}
+
+impl FromStr for SingleRaceBoatRaceEvent {
+    type Err = ParseBoatRacesFromStringError;
+
+    fn from_str(string: &str) -> Result<Self, Self::Err> {
+        let lines: Vec<&str> = string.lines().collect();
+        let time = lines
+            .get(0)
+            .expect("Failed to get line repesenting time")
+            .split_once(':')
+            .expect("Failed to split line")
+            .1
+            .split_whitespace()
+            .collect::<Vec<&str>>()
+            .join("")
+            .parse::<u64>()
+            .expect("Failed to parse time into a number");
+
+        let record_distance = lines
+            .get(1)
+            .expect("Failed to get line repesenting record distance")
+            .split_once(':')
+            .expect("Failed to split line")
+            .1
+            .split_whitespace()
+            .collect::<Vec<&str>>()
+            .join("")
+            .parse::<u64>()
+            .expect("Failed to parse record distance into a number");
+
+        let race = Race::new(time, record_distance);
+
+        Ok(Self { race })
+    }
+}
+
+#[derive(Debug)]
 pub struct BoatRaceEvent {
     races: Vec<Race>,
 }
 
 impl BoatRaceEvent {
-    pub fn multiply_number_of_ways_each_race_record_can_be_broken(&self) -> u32 {
+    pub fn multiply_number_of_ways_each_race_record_can_be_broken(&self) -> u64 {
         self.races.iter().fold(1, |acc, race| {
             acc * race.get_number_of_ways_record_distance_can_be_broken()
         })
@@ -22,14 +62,14 @@ impl FromStr for BoatRaceEvent {
     type Err = ParseBoatRacesFromStringError;
 
     fn from_str(string: &str) -> Result<Self, Self::Err> {
-        let mut time_list: Vec<u32> = vec![];
-        let mut record_distance_list: Vec<u32> = vec![];
+        let mut time_list: Vec<u64> = vec![];
+        let mut record_distance_list: Vec<u64> = vec![];
 
         for (line_index, line) in string.lines().enumerate() {
             match line.split_once(':') {
                 Some((_, races)) => {
                     races.split_whitespace().for_each(|num| {
-                        let num = num.parse::<u32>().expect("Failed to parse number");
+                        let num = num.parse::<u64>().expect("Failed to parse number");
                         if line_index == 0 {
                             time_list.push(num);
                         } else {
