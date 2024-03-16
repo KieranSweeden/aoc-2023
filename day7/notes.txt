@@ -1,0 +1,33 @@
+Camel cards, a similar game to poker but more simple.
+
+You get a list of hands, your goal is to roder them based on the "strength" of each hand.
+
+A hand consists of 5 cards labeled using the letters of each special card and numbers from 2 to 9.
+
+The relative strength of each card follows the order of:
+A, K, Q, J, 9, 8, 7, 6, 5, 4, 3, 2
+
+Every hand can fall within the following "types", starting from strongest to weakest, they are:
+- Five of a kind - all five cards have the same label: AAAAA
+- Four of a kind - four cards have the same label and one is different: AA8AA
+- Full house - three cards have the same label and the other two share a different label: 23322
+- Three of a kind - 3 cards have the same label, the other two are different: TTT98
+- Two pair - 2 cards share one label, another 2 share a different label, 1 remaining card is different: 23432
+- One pair - two cards share one label, the other 3 cards each have different labels: A23A4
+- High card - all card labels are different
+
+Hands are ordered based on type: every full house > three of a kind.
+
+If hands are the same type: they are then ordered by which hand has "strongest" card first.
+E.g. 33332 & 2AAAA are both four of a kind, but the first is stronger as 3 is greater than 2.
+77888 & 77788 are both full house, but the first is stronger as third digit of the first is greater than the third digit of the second.
+
+We are given a list of hands, alongside each is a corresponding "bid".
+
+The ranking order of the hands, dictate the multiplier set for each bid.
+
+To determing winnings for each hand,
+the lowest ranking hand's bid get multipled by 1,
+whereas the highest ranking hand's bid get's multiplied by the amount of total hands.
+
+We then sum up all the winnings together to get the total amount of winnings which will be our target.
