@@ -15,6 +15,7 @@ pub enum CardType {
     Four,
     Three,
     Two,
+    Joker,
 }
 
 impl PartialEq for CardType {
@@ -79,6 +80,10 @@ impl PartialOrd for CardType {
             (_, Three) => Ordering::Less,
 
             (Two, Two) => Ordering::Equal,
+            (Two, _) => Ordering::Greater,
+            (_, Two) => Ordering::Less,
+
+            (Joker, Joker) => Ordering::Equal,
         })
     }
 }
@@ -115,8 +120,12 @@ pub struct Card {
 }
 
 impl Card {
-    pub fn new(label: char) -> Self {
-        let card_type = CardType::try_from(label).unwrap();
+    pub fn new(label: char, joker_mode: bool) -> Self {
+        let card_type = if joker_mode && label == 'J' {
+            CardType::Joker
+        } else {
+            CardType::try_from(label).unwrap()
+        };
         Card { label, card_type }
     }
 }
@@ -141,8 +150,8 @@ mod test {
 
     #[test]
     fn cards_are_ordered_correctly() {
-        let ace_card = Card::new('A');
-        let five_card = Card::new('5');
+        let ace_card = Card::new('A', false);
+        let five_card = Card::new('5', false);
         assert_eq!(ace_card.partial_cmp(&five_card), Some(Ordering::Greater))
     }
 }

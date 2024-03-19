@@ -40,7 +40,7 @@ mod test {
 
     #[test]
     fn game_can_be_parsed() -> Result<(), Error> {
-        let input = include_str!("../../example.txt");
+        let input = include_str!("../example.txt");
         let game = Game::from_str(input)?;
         assert!(!game.hands.is_empty());
         Ok(())
@@ -48,7 +48,7 @@ mod test {
 
     #[test]
     fn game_calculates_winnings_correctly() -> Result<(), Error> {
-        let input = include_str!("../../example.txt");
+        let input = include_str!("../example.txt");
         let game = Game::from_str(input)?;
         let winnings = game.calculate_winnings();
         assert_eq!(winnings, 6440);
@@ -57,7 +57,7 @@ mod test {
 
     #[test]
     fn orders_hands_correctly() -> Result<(), Error> {
-        let input = include_str!("../../example.txt");
+        let input = include_str!("../example.txt");
         let game = Game::from_str(input)?;
         let first_hand = game.hands.get(0).unwrap();
         assert_eq!(first_hand.bid, 483);
@@ -69,6 +69,16 @@ mod test {
         assert_eq!(fourth_hand.bid, 220);
         let fifth_hand = game.hands.get(4).unwrap();
         assert_eq!(fifth_hand.bid, 765);
+        Ok(())
+    }
+
+    #[test]
+    fn game_calculates_winnings_correctly_in_joker_mode() -> Result<(), Error> {
+        std::env::set_var("JOKER_MODE", "true");
+        let input = include_str!("../example.txt");
+        let game = Game::from_str(input)?;
+        let winnings = game.calculate_winnings();
+        assert_eq!(winnings, 5905);
         Ok(())
     }
 }

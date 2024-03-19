@@ -4,7 +4,7 @@ use std::iter::zip;
 use std::ops::Add;
 use std::str::FromStr;
 
-use crate::camel_cards::card::Card;
+use crate::camel_cards::card::{Card, CardType};
 use crate::camel_cards::error::Error;
 
 #[derive(Debug, PartialEq, Eq, Ord)]
@@ -56,13 +56,44 @@ impl TryFrom<&Vec<Card>> for HandType {
     type Error = Error;
 
     fn try_from(cards: &Vec<Card>) -> Result<Self, Self::Error> {
+        let joker_mode = match std::env::var("JOKER_MODE") {
+            Ok(value) => value == "true",
+            Err(_) => false,
+        };
+
         let mut label_counts: HashMap<char, u64> = HashMap::new();
+        let mut label_counts_contain_jokers = false;
         for card in cards.iter() {
             let label = card.label;
+            if label == 'J' && joker_mode == true {
+                label_counts_contain_jokers = true;
+            }
+
             match label_counts.get(&label) {
                 Some(count) => label_counts.insert(label, count.add(1)),
                 None => label_counts.insert(label, 1),
             };
+        }
+
+        // wrong
+        // we don't make joker increase highest card
+        // we add jokers to highest count in hand,
+        // enabling hand to retrieve best possible hand type
+
+        if joker_mode && label_counts_contain_jokers && label_counts.len() > 1 {
+            if let Some(joker_count) = label_counts.remove(&'J') {
+                if let Some((label_with_highest_count, _)) = label_counts
+                    .iter()
+                    .max_by(|(_, x_count), (_, y_count)| x_count.cmp(y_count))
+                {
+                    if let Some(highest_label_count) = label_counts.get(&label_with_highest_count) {
+                        label_counts.insert(
+                            *label_with_highest_count,
+                            highest_label_count.add(joker_count),
+                        );
+                    }
+                }
+            }
         }
 
         match label_counts.len() {
@@ -148,7 +179,16 @@ impl FromStr for Hand {
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         let (card_labels, bid) = string.split_at(5);
 
-        let cards: Vec<Card> = card_labels.chars().map(|label| Card::new(label)).collect();
+        let joker_mode = match std::env::var("JOKER_MODE") {
+            Ok(value) => value == "true",
+            Err(_) => false,
+        };
+
+        let cards: Vec<Card> = card_labels
+            .chars()
+            .map(|label| Card::new(label, joker_mode))
+            .collect();
+
         let hand_type = HandType::try_from(&cards)?;
 
         match bid.trim().parse::<u64>() {

@@ -8,7 +8,7 @@ fn process(input: &str) -> Result<u64, camel_cards::error::Error> {
 }
 
 fn main() {
-    let input = include_str!("../input.txt");
+    let input = include_str!("./input.txt");
     match process(input) {
         Ok(result) => println!("The result is: {}", result),
         Err(e) => panic!("Error: {:?}", e),
