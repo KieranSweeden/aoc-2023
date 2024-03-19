@@ -46,20 +46,22 @@ impl Almanac {
     }
 
     fn parse_seed_str_range(seed_str: &str) -> Result<Vec<u32>, &str> {
-        let seed_id_list_str = seed_str
+        let seed_id_list_str: Vec<u32> = seed_str
             .split(':')
             .nth(1)
-            .expect("Failed to retrieve seed ids");
-
-        Ok(seed_id_list_str
+            .expect("Failed to retrieve seed ids")
             .trim()
             .split_whitespace()
-            .map(|seed_id| {
-                seed_id
-                    .parse::<u32>()
-                    .expect("Failed to parse seed id to number")
-            })
-            .collect())
+            .map(|seed_id| seed_id.parse::<u32>().expect("Failed"))
+            .collect();
+
+        let mut seed_id_list: Vec<u32> = vec![];
+
+        for [start, range] in seed_id_list_str.chunks(2) {
+            for i in *start..(*start + *range) {}
+        }
+
+        Ok(seed_id_list)
     }
 
     fn parse_mappers_str(mappers_str: Vec<&str>) -> Result<Vec<map::Map>, &str> {

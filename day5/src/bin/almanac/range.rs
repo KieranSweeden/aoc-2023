@@ -2,6 +2,11 @@ const DESTINATION_START_INDEX: usize = 0;
 const SOURCE_START_INDEX: usize = 1;
 const RANGE_INDEX: usize = 2;
 
+pub struct SeedRange {
+    pub start: u32,
+    pub end: u32,
+}
+
 #[derive(Debug)]
 pub struct SourceRange {
     pub start: u32,
