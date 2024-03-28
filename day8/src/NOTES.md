@@ -35,3 +35,8 @@ L means navigate to the current node's left node & R means navigate to the curre
 We'll need to repeat the whole sequence of instructions if we run out of instructions.
 
 Our **answer** is the amount of steps required in order to reach the **ZZZ** when starting from **AAA**.
+
+### Todos
+
+- [] Parse Node from "GLJ = (QQV, JTL)"
+- [] Parse Network using Nodes
