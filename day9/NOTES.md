@@ -1,21 +1,21 @@
-# Data structures
+# Notes
 
-## Report
+## Data structures
 
-Type: Struct
-Properties:
+### Report
 
-- Areas: Area list
+- Type: Struct
+- Properties:
+  - Areas: Area list
 
-## Area
+### Area
 
-Type: Struct
-Properties:
+- Type: Struct
+- Properties:
+  - History: Value list
 
-- History: Value list
+### Value
 
-## Value
-
-Type: Struct wrapping an i32
-Highest value: 21793992
-Lowest value: -1698921
+- Type: Struct wrapping an i32
+  - Highest recorded value: 21793992
+  - Lowest recorded value: -1698921
