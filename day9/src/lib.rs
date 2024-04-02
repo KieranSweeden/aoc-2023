@@ -12,6 +12,13 @@ impl Report {
             .map(|area| area.get_next_value_prediction())
             .sum()
     }
+
+    pub fn get_past_value_area_prediction_sum(&self) -> i32 {
+        self.areas
+            .iter()
+            .map(|area| area.get_past_value_prediction())
+            .sum()
+    }
 }
 
 impl TryFrom<&str> for Report {
@@ -35,6 +42,30 @@ impl Area {
         let mut last_nums: Vec<i32> = vec![latest_value];
         let mut diffs: Vec<i32> = self
             .history
+            .windows(2)
+            .map(|pair| pair[1].0 - pair[0].0)
+            .collect();
+        last_nums.push(*diffs.last().unwrap());
+
+        while !diffs.iter().all(|diff| *diff == 0) {
+            diffs = diffs.windows(2).map(|pair| pair[1] - pair[0]).collect();
+            last_nums.push(*diffs.last().unwrap())
+        }
+
+        last_nums.iter().sum()
+    }
+
+    fn get_history_reversed(&self) -> Vec<Value> {
+        let mut history_reversed = self.history.clone();
+        history_reversed.reverse();
+        history_reversed
+    }
+
+    fn get_past_value_prediction(&self) -> i32 {
+        let reversed_history = self.get_history_reversed();
+        let latest_value = reversed_history.last().unwrap().0;
+        let mut last_nums: Vec<i32> = vec![latest_value];
+        let mut diffs: Vec<i32> = reversed_history
             .windows(2)
             .map(|pair| pair[1].0 - pair[0].0)
             .collect();
